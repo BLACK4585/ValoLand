@@ -13,7 +13,7 @@ le
 .mtj.tmp/
 
 # Package Files #
-/build/*.jar
+/build
 *.war
 *.nar
 *.ear
