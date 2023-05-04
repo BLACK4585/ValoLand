@@ -1,4 +1,6 @@
-# Compiled class file
+
+.idea/discord.xml
+le
 *.class
 
 # Log file
@@ -22,3 +24,18 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+.idea/dbnavigator.xml
+
+/.gradle/
+/.nb-gradle/
+/build/
+/private/
+/*.dll
+/*.dylib
+/*.so
+
+#Although most of the .idea directory should not be committed there is a legitimate purpose for committing run configurations
+/.idea/
+!/.idea/runConfigurations/
+
+local.properties
