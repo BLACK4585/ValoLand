@@ -6,7 +6,7 @@ plugins {
 group 'tk.blackdev'
 version '1.0'
 
-mainClassName = "tk.blackdev.Main"
+mainClassName = "tk.blackdev.ValoLand"
 
 repositories {
     mavenCentral()

@@ -1,0 +1,20 @@
+Material MyMaterial : Common/MatDefs/Light/PBRLighting.j3md {
+    MaterialParameters {
+        EmissivePower : 3.0
+        BackfaceShadows : false
+        Splits : 0.7019608 0.101960786 0.101960786 1.0
+        Roughness : 1.0
+        EmissiveIntensity : 2.0
+        SteepParallax : false
+        Glossiness : 1.0
+        BaseColor : 0.7019608 0.101960786 0.101960786 1.0
+        ParallaxHeight : 0.05
+        Metallic : 1.0
+        NormalType : -1.0
+        Emissive : 0.7019608 0.101960786 0.101960786 1.0
+        ProbeData : 0.7019608 0.101960786 0.101960786 1.0
+        Specular : 0.7019608 0.101960786 0.101960786 1.0
+    }
+    AdditionalRenderState {
+    }
+}
