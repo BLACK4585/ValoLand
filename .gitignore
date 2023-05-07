@@ -1,6 +1,6 @@
 
 .idea/discord.xml
-le
+
 *.class
 
 # Log file
@@ -16,7 +16,6 @@ le
 *.war
 *.nar
 *.ear
-*.zip
 *.tar.gz
 *.rar
 
@@ -32,6 +31,7 @@ replay_pid*
 /*.dll
 /*.dylib
 /*.so
+!/assets/
 
 #Although most of the .idea directory should not be committed there is a legitimate purpose for committing run configurations
 /.idea/
