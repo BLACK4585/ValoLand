@@ -39,13 +39,14 @@ public class ValoLand extends SimpleApplication {
         inputManager.addMapping("Pause", new KeyTrigger(KeyInput.KEY_P));
         inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_J));
         inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_K));
-        inputManager.addMapping("Rotate", new KeyTrigger(KeyInput.KEY_SPACE));
+        inputManager.addMapping("Rotate", new KeyTrigger(KeyInput.KEY_G));
         inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_H));
         inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_L));
+        inputManager.addMapping("CamSwitch", new KeyTrigger(KeyInput.KEY_B));
         
         inputManager.addListener(actionListener, "Pause");
         inputManager.addListener(analogListener, "Left", "Right", "Rotate",
-                "Up", "Down");
+                "Up", "Down", "CamSwitch");
     }
     
     private final ActionListener actionListener = new ActionListener() {
@@ -81,6 +82,13 @@ public class ValoLand extends SimpleApplication {
                 if (name.equals("Down")) {
                     geom.move(new Vector3f(0, -value, 0));
                 }
+                if (name.equals("SwitchCam")) {
+                    if (flyCam.isEnabled()) {
+                        flyCam.setEnabled(false);
+                    } else {
+                        flyCam.setEnabled(true);
+                    }
+                }
             } else {
                 text.setText("Drücke P um fortzusetzen");
             }
@@ -90,6 +98,7 @@ public class ValoLand extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         initKeys();
+        flyCam.setEnabled(true);
         
         Box b = new Box(1, 1, 1);
         geom = new Geometry("Box", b);
