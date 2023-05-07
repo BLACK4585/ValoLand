@@ -16,6 +16,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
+import com.jme3.system.AppSettings;
 
 /**
  * This is the Main Class of your Game. It should boot up your game and do
@@ -29,6 +30,7 @@ public class ValoLand extends SimpleApplication {
     private Geometry geom2;
     private boolean isRunning = true;
     BitmapText text;
+    AppSettings settings = new AppSettings(true);
 
     public static void main(String[] args) {
         ValoLand app = new ValoLand();
@@ -99,6 +101,13 @@ public class ValoLand extends SimpleApplication {
     public void simpleInitApp() {
         initKeys();
         flyCam.setEnabled(true);
+        settings.setVSync(true);
+        settings.setWidth(1920);
+        settings.setHeight(1080);
+        settings.setResizable(true);
+        settings.setFullscreen(true);
+        
+        setSettings(settings);
         
         Box b = new Box(1, 1, 1);
         geom = new Geometry("Box", b);
@@ -119,7 +128,7 @@ public class ValoLand extends SimpleApplication {
         car = assetManager.loadModel("Models/bugatti.j3o");
         Material mat3 = new Material(assetManager, "Common/MatDefs/Misc/ShowNormals.j3md");
         car.setMaterial(mat3);
-        car.setLocalTranslation(-10, -5, 0);
+        car.setLocalTranslation(-10, -3, 0);
         car.rotate(0, 180, 0);
 
         AmbientLight light = new AmbientLight(ColorRGBA.White);
@@ -132,7 +141,7 @@ public class ValoLand extends SimpleApplication {
         
         assetManager.registerLocator("town.zip", ZipLocator.class);
         Spatial gameLevel = assetManager.loadModel("main.scene");
-        gameLevel.setLocalTranslation(0, -5, 90);
+        gameLevel.setLocalTranslation(0, -3, 90);
         gameLevel.setLocalScale(2);
         
         rootNode.attachChild(pivot);
