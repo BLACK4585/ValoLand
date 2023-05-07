@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'edu.sc.seis.launch4j' version '2.5.4'
 }
 
 group 'tk.blackdev'
@@ -83,4 +84,11 @@ java {
 
 wrapper {
     gradleVersion = '7.6'
+}
+
+launch4j {
+    mainClassName = 'tk.blackdev.ValoLand'
+    icon = "${projectDir}/uwu.ico"
+    bundledJrePath = "C:\\Program Files\\Java\\jdk-17.0.1"
+    bundledJre64Bit = true
 }
