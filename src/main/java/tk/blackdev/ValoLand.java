@@ -1,21 +1,16 @@
 package tk.blackdev;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.light.AmbientLight;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 
 /**
@@ -25,15 +20,17 @@ import com.jme3.system.AppSettings;
  */
 public class ValoLand extends SimpleApplication {
     
-    private Spatial car;
     private Geometry geom;
-    private Geometry geom2;
+    private Spatial character;
     private boolean isRunning = true;
+    Node loadedNode;
     BitmapText text;
-    AppSettings settings = new AppSettings(true);
 
     public static void main(String[] args) {
+        AppSettings settings = new AppSettings(true);
+        settings.setResolution(1908, 1080);
         ValoLand app = new ValoLand();
+        app.setSettings(settings);
         app.start();
     }
     
@@ -44,7 +41,6 @@ public class ValoLand extends SimpleApplication {
         inputManager.addMapping("Rotate", new KeyTrigger(KeyInput.KEY_G));
         inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_H));
         inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_L));
-        inputManager.addMapping("CamSwitch", new KeyTrigger(KeyInput.KEY_B));
         
         inputManager.addListener(actionListener, "Pause");
         inputManager.addListener(analogListener, "Left", "Right", "Rotate",
@@ -70,26 +66,19 @@ public class ValoLand extends SimpleApplication {
         public void onAnalog(String name, float value, float tpf) {
             if (isRunning) {
                 if (name.equals("Rotate")) {
-                    geom.rotate(0, value, 0);
+                    loadedNode.rotate(0, value, 0);
                 }
                 if (name.equals("Right")) {
-                    geom.move(new Vector3f(value, 0, 0));
+                    loadedNode.move(new Vector3f(value, 0, 0));
                 }
                 if (name.equals("Left")) {
-                    geom.move(new Vector3f(-value, 0,0));
+                    loadedNode.move(new Vector3f(-value, 0,0));
                 }
                 if (name.equals("Up")) {
-                    geom.move(new Vector3f(0, value, 0));
+                    loadedNode.move(new Vector3f(0, value, 0));
                 }
                 if (name.equals("Down")) {
-                    geom.move(new Vector3f(0, -value, 0));
-                }
-                if (name.equals("SwitchCam")) {
-                    if (flyCam.isEnabled()) {
-                        flyCam.setEnabled(false);
-                    } else {
-                        flyCam.setEnabled(true);
-                    }
+                    loadedNode.move(new Vector3f(0, -value, 0));
                 }
             } else {
                 text.setText("Drücke P um fortzusetzen");
@@ -100,63 +89,19 @@ public class ValoLand extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         initKeys();
-        flyCam.setEnabled(true);
-        settings.setVSync(true);
-        settings.setWidth(1920);
-        settings.setHeight(1080);
-        settings.setResizable(true);
-        settings.setFullscreen(true);
+        setDisplayStatView(false);        
         
-        setSettings(settings);
-        
-        Box b = new Box(1, 1, 1);
-        geom = new Geometry("Box", b);
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/ShowNormals.j3md");
-        geom.setMaterial(mat);
-
-        Box b2 = new Box(1, 1, 1);
-        geom2 = new Geometry("Box2", b2);
-        Material mat2 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat2.setColor("Color", ColorRGBA.Orange);
-        geom2.setMaterial(mat2);
-        geom2.setLocalTranslation(2, 2, 0);
-
-        Node pivot = new Node("pivot");
-        pivot.attachChild(geom);
-        pivot.attachChild(geom2);
-        
-        car = assetManager.loadModel("Models/bugatti.j3o");
-        Material mat3 = new Material(assetManager, "Common/MatDefs/Misc/ShowNormals.j3md");
-        car.setMaterial(mat3);
-        car.setLocalTranslation(-10, -3, 0);
-        car.rotate(0, 180, 0);
-
-        AmbientLight light = new AmbientLight(ColorRGBA.White);
-        
-        setDisplayStatView(false);
         guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
         text = new BitmapText(guiFont);
         text.setSize(40);
         text.setLocalTranslation(200, text.getLineHeight(), 0);
-        
-        assetManager.registerLocator("town.zip", ZipLocator.class);
-        Spatial gameLevel = assetManager.loadModel("main.scene");
-        gameLevel.setLocalTranslation(0, -3, 90);
-        gameLevel.setLocalScale(2);
-        
-        rootNode.attachChild(pivot);
-        rootNode.attachChild(car);
-        rootNode.addLight(light);
-        rootNode.attachChild(gameLevel);
+
         guiNode.attachChild(text);
     }
     
     @Override
     public void simpleUpdate(float tpf) {
-        car.rotate(0, 2*tpf, 0);
-        Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.randomColor());
-        geom2.setMaterial(mat);
+        // live upate
     }
 
     @Override
