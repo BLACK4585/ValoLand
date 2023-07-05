@@ -16,7 +16,7 @@ repositories {
 }
 
 project.ext {
-  jmeVer = '3.6.0-stable'
+  jmeVer = '3.6.1-stable'
 }
 
 project(":assets") {

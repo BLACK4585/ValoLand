@@ -1,92 +1,66 @@
 package tk.blackdev;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.export.binary.BinaryImporter;
 import com.jme3.font.BitmapText;
+import com.jme3.input.ChaseCamera;
 import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.light.AmbientLight;
+import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
-import com.jme3.scene.Geometry;
+import com.jme3.scene.CameraNode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.CameraControl;
 import com.jme3.system.AppSettings;
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- * This is the Main Class of your Game. It should boot up your game and do
- * initial initialisation Move your Logic into AppStates or Controls or other
- * java classes
- */
 public class ValoLand extends SimpleApplication {
-    
-    private Geometry geom;
-    private Spatial character;
-    private boolean isRunning = true;
-    Node loadedNode;
+
+    Spatial player;
     BitmapText text;
 
     public static void main(String[] args) {
         AppSettings settings = new AppSettings(true);
-        settings.setResolution(1908, 1080);
+        settings.setResolution(1920, 1080);
         ValoLand app = new ValoLand();
         app.setSettings(settings);
         app.start();
     }
     
     public void initKeys(){
-        inputManager.addMapping("Pause", new KeyTrigger(KeyInput.KEY_P));
-        inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_J));
-        inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_K));
-        inputManager.addMapping("Rotate", new KeyTrigger(KeyInput.KEY_G));
-        inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_H));
-        inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_L));
-        
-        inputManager.addListener(actionListener, "Pause");
-        inputManager.addListener(analogListener, "Left", "Right", "Rotate",
-                "Up", "Down", "CamSwitch");
+        inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_SPACE));
+        inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_C));
+        inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_A));
+        inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_D));
+        inputManager.addMapping("Forwards", new KeyTrigger(KeyInput.KEY_W));
+        inputManager.addMapping("Backwards", new KeyTrigger(KeyInput.KEY_S));
+
+        inputManager.addListener(analogListener, "Up", "Down", "Left", "Right", "Forwards", "Backwards");
     }
-    
-    private final ActionListener actionListener = new ActionListener() {
-        @Override
-        public void onAction(String name, boolean keyPressed, float tpf) {
-            if (name.equals("Pause") && !keyPressed) {
-               isRunning = !isRunning; 
-               if (isRunning) {
-                   text.setText("");
-               } else {
-                   text.setText("Das Spiel ist pausiert!");
-               }
-            }
-        }
-    };
+
     
     private final AnalogListener analogListener = new AnalogListener() {
         @Override
         public void onAnalog(String name, float value, float tpf) {
-            if (isRunning) {
-                if (name.equals("Rotate")) {
-                    loadedNode.rotate(0, value, 0);
-                }
-                if (name.equals("Right")) {
-                    loadedNode.move(new Vector3f(value, 0, 0));
-                }
-                if (name.equals("Left")) {
-                    loadedNode.move(new Vector3f(-value, 0,0));
-                }
-                if (name.equals("Up")) {
-                    loadedNode.move(new Vector3f(0, value, 0));
-                }
-                if (name.equals("Down")) {
-                    loadedNode.move(new Vector3f(0, -value, 0));
-                }
-            } else {
-                text.setText("Drücke P um fortzusetzen");
+            if (name.equals("Up")) {
+                player.move(new Vector3f(0, value, 0));
+            }
+            if (name.equals("Down")) {
+                player.move(new Vector3f(0, -value, 0));
+            }
+            if (name.equals("Left")) {
+                player.move(new Vector3f(-value, 0, 0));
+            }
+            if (name.equals("Right")) {
+                player.move(new Vector3f(value, 0, 0));
+            }
+            if (name.equals("Forwards")) {
+                player.move(new Vector3f(0, 0, -value));
+            }
+            if (name.equals("Backwards")) {
+                player.move(new Vector3f(0, 0, value));
             }
         }
     };
@@ -94,33 +68,28 @@ public class ValoLand extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         initKeys();
-        setDisplayStatView(false);        
-        
-        guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
-        text = new BitmapText(guiFont);
-        text.setSize(40);
-        text.setLocalTranslation(200, text.getLineHeight(), 0);
-        
-         /** Load a Node from a .j3o file */
-        BinaryImporter importer = BinaryImporter.getInstance();
-        importer.setAssetManager(assetManager);
-        String home = System.getProperty("user.dir") + "/../../../../../";
-        File file = new File(home + "/Scenes/level1.j3o");
-        try {
-          Node loadedNode = (Node)importer.load(file);
-          loadedNode.setName("loaded node");
-          rootNode.attachChild(loadedNode);
-        } catch (IOException ex) {
-          Logger.getLogger(ValoLand.class.getName()).log(Level.SEVERE, "No saved node loaded.", ex);
-        } 
+        setDisplayStatView(false);
+        flyCam.setEnabled(false);
 
+        Material mat = new Material(assetManager, "Common/MatDefs/Misc/ShowNormals.j3md");
 
-        guiNode.attachChild(text);
+        Spatial ground = assetManager.loadModel("/Scenes/level1.j3o");
+        player = assetManager.loadModel("/Models/character.j3o");
+        player.setMaterial(mat);
+        player.rotate(0, 160, 0);
+        AmbientLight al = new AmbientLight();
+
+        ChaseCamera chaseCam = new ChaseCamera(cam, player, inputManager);
+        chaseCam.setInvertVerticalAxis(true);
+
+        rootNode.attachChild(ground);
+        rootNode.attachChild(player);
+        rootNode.addLight(al);
     }
     
     @Override
     public void simpleUpdate(float tpf) {
-        // live upate
+        // live update
     }
 
     @Override
