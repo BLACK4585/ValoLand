@@ -10,26 +10,25 @@ import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
-import com.jme3.scene.CameraNode;
-import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.control.CameraControl;
 import com.jme3.system.AppSettings;
 
 public class ValoLand extends SimpleApplication {
 
     Spatial player;
+    ChaseCamera chaseCam;
     BitmapText text;
 
     public static void main(String[] args) {
         AppSettings settings = new AppSettings(true);
         settings.setResolution(1920, 1080);
+        settings.setResizable(true);
         ValoLand app = new ValoLand();
         app.setSettings(settings);
         app.start();
     }
-    
-    public void initKeys(){
+
+    public void initKeys() {
         inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_SPACE));
         inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_C));
         inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_A));
@@ -40,7 +39,7 @@ public class ValoLand extends SimpleApplication {
         inputManager.addListener(analogListener, "Up", "Down", "Left", "Right", "Forwards", "Backwards");
     }
 
-    
+
     private final AnalogListener analogListener = new AnalogListener() {
         @Override
         public void onAnalog(String name, float value, float tpf) {
@@ -51,16 +50,16 @@ public class ValoLand extends SimpleApplication {
                 player.move(new Vector3f(0, -value, 0));
             }
             if (name.equals("Left")) {
-                player.move(new Vector3f(-value, 0, 0));
+                player.move(new Vector3f(-value * 4, 0, 0));
             }
             if (name.equals("Right")) {
-                player.move(new Vector3f(value, 0, 0));
+                player.move(new Vector3f(value * 4, 0, 0));
             }
             if (name.equals("Forwards")) {
-                player.move(new Vector3f(0, 0, -value));
+                player.move(new Vector3f(0, 0, -value * 4));
             }
             if (name.equals("Backwards")) {
-                player.move(new Vector3f(0, 0, value));
+                player.move(new Vector3f(0, 0, value * 4));
             }
         }
     };
@@ -73,23 +72,23 @@ public class ValoLand extends SimpleApplication {
 
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/ShowNormals.j3md");
 
-        Spatial ground = assetManager.loadModel("/Scenes/level1.j3o");
+        Spatial ground = assetManager.loadModel("/Scenes/newScene.j3o");
         player = assetManager.loadModel("/Models/character.j3o");
         player.setMaterial(mat);
-        player.rotate(0, 160, 0);
         AmbientLight al = new AmbientLight();
 
-        ChaseCamera chaseCam = new ChaseCamera(cam, player, inputManager);
+        chaseCam = new ChaseCamera(cam, player, inputManager);
         chaseCam.setInvertVerticalAxis(true);
+        chaseCam.setDefaultHorizontalRotation(1.5f);
 
         rootNode.attachChild(ground);
         rootNode.attachChild(player);
         rootNode.addLight(al);
     }
-    
+
     @Override
     public void simpleUpdate(float tpf) {
-        // live update
+        //add update code here
     }
 
     @Override
