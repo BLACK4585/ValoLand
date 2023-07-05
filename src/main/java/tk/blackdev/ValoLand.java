@@ -1,6 +1,7 @@
 package tk.blackdev;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.export.binary.BinaryImporter;
 import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -12,6 +13,10 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This is the Main Class of your Game. It should boot up your game and do
@@ -95,6 +100,20 @@ public class ValoLand extends SimpleApplication {
         text = new BitmapText(guiFont);
         text.setSize(40);
         text.setLocalTranslation(200, text.getLineHeight(), 0);
+        
+         /** Load a Node from a .j3o file */
+        BinaryImporter importer = BinaryImporter.getInstance();
+        importer.setAssetManager(assetManager);
+        String home = System.getProperty("user.dir") + "/../../../../../";
+        File file = new File(home + "/Scenes/level1.j3o");
+        try {
+          Node loadedNode = (Node)importer.load(file);
+          loadedNode.setName("loaded node");
+          rootNode.attachChild(loadedNode);
+        } catch (IOException ex) {
+          Logger.getLogger(ValoLand.class.getName()).log(Level.SEVERE, "No saved node loaded.", ex);
+        } 
+
 
         guiNode.attachChild(text);
     }
